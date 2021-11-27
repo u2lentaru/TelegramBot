@@ -61,7 +61,21 @@ func main() {
 
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		case "SUB":
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Убавить валюту"))
+			summ, err := strconv.ParseFloat(msgArr[2], 64)
+			if err != nil {
+				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ошибка конвертации"))
+				continue
+			}
+
+			if _, ok := db[update.Message.Chat.ID]; !ok {
+				db[update.Message.Chat.ID] = wallet{}
+			}
+
+			db[update.Message.Chat.ID][msgArr[1]] -= summ
+
+			msg := fmt.Sprintf("Баланс: %s %f", msgArr[1], db[update.Message.Chat.ID][msgArr[1]])
+
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		case "DEL":
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Удалить валюту"))
 		case "SHOW":
