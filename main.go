@@ -80,7 +80,13 @@ func main() {
 			delete(db[update.Message.Chat.ID], msgArr[1])
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Валюта удалена"))
 		case "SHOW":
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Показать всё"))
+			msg := "Баланс:\n"
+
+			for key, value := range db[update.Message.Chat.ID] {
+				msg += fmt.Sprintf("Валюта: %s Сумма: %f\n", key, value)
+			}
+
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		default:
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Команда неизвестна"))
 		}
