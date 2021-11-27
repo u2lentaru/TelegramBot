@@ -77,7 +77,8 @@ func main() {
 
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		case "DEL":
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Удалить валюту"))
+			delete(db[update.Message.Chat.ID], msgArr[1])
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Валюта удалена"))
 		case "SHOW":
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Показать всё"))
 		default:
