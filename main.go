@@ -3,11 +3,12 @@ package main
 import (
 	"log"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("MyAwesomeBotToken")
+	//TestTB TestTB2bot
+	bot, err := tgbotapi.NewBotAPI("2118351815:AAGEdmU16piE7uD_7ojUMFZ5D1O4eQT1INk")
 	if err != nil {
 		log.Panic(err)
 	}
@@ -19,7 +20,7 @@ func main() {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
-	updates := bot.GetUpdatesChan(u)
+	updates, err := bot.GetUpdatesChan(u)
 
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
