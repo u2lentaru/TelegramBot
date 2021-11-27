@@ -114,16 +114,21 @@ func main() {
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Валюта удалена"))
 		case "SHOW":
 			msg := "Баланс:\n"
+			var usdSum float64 = 0
 
 			for key, value := range db[update.Message.Chat.ID] {
 				coinPrice, err := getPrice(key)
+
 				if err != nil {
 					bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, err.Error()))
 					return
 				}
 
 				msg += fmt.Sprintf("Валюта: %s Сумма: %.2f [%.2f]\n", key, value, value*coinPrice)
+				usdSum += value * coinPrice
 			}
+
+			msg += fmt.Sprintf("Сумма USD: %.2f\n", usdSum)
 
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		default:
@@ -132,6 +137,8 @@ func main() {
 
 		// msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 		// msg.ReplyToMessageID = update.Message.MessageID
+
 		// bot.Send(msg)
 	}
+
 }
