@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -10,6 +12,10 @@ import (
 func getKey() string {
 	return "2118351815:AAGEdmU16piE7uD_7ojUMFZ5D1O4eQT1INk"
 }
+
+type wallet map[string]float64
+
+var db = map[int64]wallet{}
 
 func main() {
 	//TestTB TestTB2bot
@@ -33,12 +39,27 @@ func main() {
 		}
 
 		// log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+		log.Println(update.Message.Text)
 
 		msgArr := strings.Split(update.Message.Text, " ")
 
 		switch msgArr[0] {
 		case "ADD":
-			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Добавить валюту"))
+			summ, err := strconv.ParseFloat(msgArr[2], 64)
+			if err != nil {
+				bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Ошибка конвертации"))
+				continue
+			}
+
+			if _, ok := db[update.Message.Chat.ID]; !ok {
+				db[update.Message.Chat.ID] = wallet{}
+			}
+
+			db[update.Message.Chat.ID][msgArr[1]] += summ
+
+			msg := fmt.Sprintf("Баланс: %s %f", msgArr[1], db[update.Message.Chat.ID][msgArr[1]])
+
+			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, msg))
 		case "SUB":
 			bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, "Убавить валюту"))
 		case "DEL":
